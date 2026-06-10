@@ -29,7 +29,7 @@ export const Scene = () => {
 
       {/* Post-processing for luxury cinematic look */}
       <EffectComposer>
-        <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={2.0} mipmapBlur />
+        <Bloom luminanceThreshold={0.8} luminanceSmoothing={0.9} intensity={0.8} mipmapBlur />
         <DepthOfField focusDistance={0} focalLength={0.02} bokehScale={3} height={480} />
         <Noise opacity={0.03} />
       </EffectComposer>
