@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #151312;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    text-rendering: geometricPrecision;
+  }
+
+  button,
+  a {
+    border-radius: 0;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid #d9b875;
+    outline-offset: 4px;
+  }
+}
+
+.marble-veil {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 26%),
+    linear-gradient(120deg, transparent 0 42%, rgba(217, 184, 117, 0.12) 42% 43%, transparent 43%),
+    linear-gradient(155deg, transparent 0 60%, rgba(255, 255, 255, 0.08) 60% 61%, transparent 61%);
+  mix-blend-mode: screen;
+  opacity: 0.42;
+}
