@@ -166,22 +166,22 @@ export const Overlays = () => {
 
       {/* Page 3: Visit */}
       <section id="visit" className="min-h-screen py-32 w-full flex items-center justify-center relative text-center">
-        <div className="fade-in-section max-w-3xl px-8 pointer-events-auto mix-blend-screen">
-          <p className="mb-6 text-[10px] uppercase tracking-[0.4em] text-champagne">Private Appointments</p>
-          <h2 className="font-display text-5xl leading-[1.1] md:text-8xl text-white mb-24">A quieter way<br/><i className="text-white/60">to choose forever.</i></h2>
+        <div className="fade-in-section max-w-3xl px-8 pointer-events-auto">
+          <p className="mb-6 text-[10px] uppercase tracking-[0.4em] text-black font-bold">Private Appointments</p>
+          <h2 className="font-display text-5xl leading-[1.1] md:text-8xl text-black font-medium mb-24">A quieter way<br/><i className="text-black/70 font-light">to choose forever.</i></h2>
           
           <div className="grid md:grid-cols-3 gap-12 mb-24">
             {services.map(({ label }) => (
               <div key={label} className="flex flex-col items-center">
-                <div className="w-px h-12 bg-gradient-to-b from-champagne to-transparent mb-6"></div>
-                <p className="text-xs tracking-[0.2em] uppercase text-white/80">{label}</p>
+                <div className="w-px h-12 bg-gradient-to-b from-black to-transparent mb-6"></div>
+                <p className="text-xs tracking-[0.2em] uppercase text-black font-semibold">{label}</p>
               </div>
             ))}
           </div>
           
           <button className="group relative inline-flex items-center justify-center">
-            <div className="absolute inset-0 border border-white/30 rounded-full scale-105 group-hover:scale-110 transition-transform duration-700 ease-out"></div>
-            <span className="bg-white text-black uppercase tracking-[0.25em] text-xs px-12 py-5 rounded-full font-medium transition-colors hover:bg-champagne hover:text-black">
+            <div className="absolute inset-0 border border-black/40 rounded-full scale-105 group-hover:scale-110 transition-transform duration-700 ease-out"></div>
+            <span className="bg-black text-white uppercase tracking-[0.25em] text-xs px-12 py-5 rounded-full font-bold transition-colors hover:bg-champagne hover:text-black shadow-xl">
               Book a Viewing
             </span>
           </button>
