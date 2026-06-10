@@ -9,16 +9,16 @@
     box-sizing: border-box;
   }
 
-  html {
-    scroll-behavior: smooth;
-    background: #151312;
-  }
-
-  body {
+  html, body {
     margin: 0;
-    min-width: 320px;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #000000;
+    color: #f4efe6;
     font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
     text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
   }
 
   button,
