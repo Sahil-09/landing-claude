@@ -1,7 +1,8 @@
 import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { MeshTransmissionMaterial } from '@react-three/drei';
 import type { Group, Mesh } from 'three';
+import * as THREE from 'three';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -17,6 +18,10 @@ export const DiamondRing: React.FC<DiamondRingProps> = ({ scale = 1, position = 
   const groupRef = useRef<Group>(null);
   const ringRef = useRef<Mesh>(null);
   const diamondRef = useRef<Group>(null);
+  
+  // Track mouse for interactive follow effect
+  const mouseTarget = useRef(new THREE.Vector2(0, 0));
+  const { viewport } = useThree();
 
   // Set up GSAP animations based on native scroll
   useGSAP(() => {
@@ -25,50 +30,59 @@ export const DiamondRing: React.FC<DiamondRingProps> = ({ scale = 1, position = 
     // We can animate the 3D object directly via its ref properties.
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: "#hero", // Just start at the top
+        trigger: "#hero", 
         start: "top top",
-        endTrigger: "#visit", // End at the visit section
+        endTrigger: "#visit", 
         end: "bottom bottom",
-        scrub: 1, // Smooth scrubbing
+        scrub: 1.5, // Smoother scrubbing
       }
     });
 
     // Initial state (Hero)
     gsap.set(groupRef.current.position, { x: 0, y: position[1], z: position[2] });
-    gsap.set(groupRef.current.rotation, { x: 0, y: 0, z: 0 });
+    gsap.set(groupRef.current.rotation, { x: 0.2, y: 0, z: 0 });
     gsap.set(groupRef.current.scale, { x: scale, y: scale, z: scale });
 
-    // Transition to Collection (moves to right, tilts)
-    tl.to(groupRef.current.position, { x: 1.5, ease: "none" }, 0)
-      .to(groupRef.current.rotation, { x: 0.8, y: Math.PI, ease: "none" }, 0)
-      .to(groupRef.current.scale, { x: scale * 1.2, y: scale * 1.2, z: scale * 1.2, ease: "none" }, 0);
+    // Transition to Collection (moves left to balance text on right, spins wildly, scales down, comes down)
+    tl.to(groupRef.current.position, { x: -1.5, y: 0, z: -1, ease: "power1.inOut" }, 0)
+      .to(groupRef.current.rotation, { x: 1.2, y: Math.PI * 2, z: 0.5, ease: "power1.inOut" }, 0)
+      .to(groupRef.current.scale, { x: scale * 0.7, y: scale * 0.7, z: scale * 0.7, ease: "power1.inOut" }, 0);
 
-    // Transition to Atelier (moves left, rotates back)
-    tl.to(groupRef.current.position, { x: -1.5, ease: "none" }, 1)
-      .to(groupRef.current.rotation, { x: -0.4, y: Math.PI * 2, z: 0.5, ease: "none" }, 1)
-      .to(groupRef.current.scale, { x: scale * 1.5, y: scale * 1.5, z: scale * 1.5, ease: "none" }, 1);
+    // Transition to Atelier (moves right, pushes into camera, shows side profile)
+    tl.to(groupRef.current.position, { x: 1.5, y: 0, z: 1, ease: "power1.inOut" }, 1)
+      .to(groupRef.current.rotation, { x: -0.2, y: Math.PI * 3.5, z: -0.8, ease: "power1.inOut" }, 1)
+      .to(groupRef.current.scale, { x: scale * 1.5, y: scale * 1.5, z: scale * 1.5, ease: "power1.inOut" }, 1);
 
-    // Transition to Visit (centers, returns to normal)
-    tl.to(groupRef.current.position, { x: 0, ease: "none" }, 2)
-      .to(groupRef.current.rotation, { x: 0.2, y: Math.PI * 3, z: 0, ease: "none" }, 2)
-      .to(groupRef.current.scale, { x: scale, y: scale, z: scale, ease: "none" }, 2);
+    // Transition to Visit (centers, zooms far out, straightens up)
+    tl.to(groupRef.current.position, { x: 0, y: 0.5, z: 0, ease: "power2.out" }, 2)
+      .to(groupRef.current.rotation, { x: 0.5, y: Math.PI * 4, z: 0, ease: "power2.out" }, 2)
+      .to(groupRef.current.scale, { x: scale * 0.8, y: scale * 0.8, z: scale * 0.8, ease: "power2.out" }, 2);
 
   }, { dependencies: [scale, position] });
 
-  // Add a continuous slow idle spin that runs on top of GSAP positioning
-  useFrame((state) => {
+  // Continuous interaction loop
+  useFrame((state, delta) => {
     if (groupRef.current) {
-      // We only animate a continuous secondary rotation on the diamond itself
-      // so it doesn't conflict with GSAP's timeline on the main group.
+      // 1. Interactive Mouse Follow
+      // Map pointer from [-1, 1] to slight rotation angles
+      mouseTarget.current.x = THREE.MathUtils.lerp(mouseTarget.current.x, state.pointer.x * 0.3, 0.1);
+      mouseTarget.current.y = THREE.MathUtils.lerp(mouseTarget.current.y, state.pointer.y * 0.3, 0.1);
+      
+      // Apply mouse rotation on top of GSAP rotation using a wrapper group or offsetting
+      // We apply it directly to the group for a subtle tilt effect
+      groupRef.current.rotation.y += (mouseTarget.current.x - groupRef.current.rotation.y * 0.1) * delta;
+      groupRef.current.rotation.x += (-mouseTarget.current.y - groupRef.current.rotation.x * 0.1) * delta;
+
+      // 2. Idle animations for the components
       if (diamondRef.current) {
-        diamondRef.current.rotation.y = state.clock.elapsedTime * 0.2;
+        diamondRef.current.rotation.y = state.clock.elapsedTime * 0.4;
       }
       if (ringRef.current) {
-        ringRef.current.rotation.z = state.clock.elapsedTime * 0.1;
+        ringRef.current.rotation.z = state.clock.elapsedTime * 0.15;
       }
       
-      // Floating effect
-      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+      // 3. Float effect
+      groupRef.current.position.y += Math.sin(state.clock.elapsedTime * 1.5) * 0.002;
     }
   });
 
@@ -87,19 +101,19 @@ export const DiamondRing: React.FC<DiamondRingProps> = ({ scale = 1, position = 
       </mesh>
 
       <group ref={diamondRef} position={[0, 0.5, 0]}>
-        {/* Main Diamond - Maxed out for ultra-realism */}
+        {/* Main Diamond */}
         <mesh castShadow>
           <octahedronGeometry args={[0.22, 2]} />
           <MeshTransmissionMaterial 
             backside
-            samples={16} // High quality
+            samples={16}
             thickness={0.5}
-            chromaticAberration={0.15} // High dispersion
+            chromaticAberration={0.15}
             anisotropy={0.2}
             distortion={0.2}
             distortionScale={0.5}
-            temporalDistortion={0.0} // Disable animation on distortion to look like solid glass
-            ior={2.42} // Diamond IOR
+            temporalDistortion={0.0}
+            ior={2.42}
             color="#ffffff"
             transmission={1}
             roughness={0}
@@ -107,7 +121,6 @@ export const DiamondRing: React.FC<DiamondRingProps> = ({ scale = 1, position = 
           />
         </mesh>
 
-        {/* Inner geometric core to simulate internal reflections */}
         <mesh scale={0.9}>
           <octahedronGeometry args={[0.22, 1]} />
           <MeshTransmissionMaterial 

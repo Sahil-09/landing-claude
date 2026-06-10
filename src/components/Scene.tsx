@@ -21,7 +21,7 @@ export const Scene = () => {
         backsideIOR={1.1}
         causticsOnly={false}
       >
-        <DiamondRing position={[0, 0.5, 0]} scale={3.5} />
+        <DiamondRing position={[0, 2.0, 0]} scale={3.5} />
       </Caustics>
 
       {/* Studio lighting environment for realistic reflections */}

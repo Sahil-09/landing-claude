@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowUpRight, Gem, Menu, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Gem, ShieldCheck, Sparkles } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,85 +31,104 @@ const products = [
 ];
 
 const services = [
-  { icon: Gem, label: 'Bespoke setting consultations' },
-  { icon: ShieldCheck, label: 'Certified ethical sourcing' },
-  { icon: Sparkles, label: 'Lifetime cleaning and care' },
+  { icon: Gem, label: 'Bespoke Setting' },
+  { icon: ShieldCheck, label: 'Ethical Sourcing' },
+  { icon: Sparkles, label: 'Lifetime Care' },
 ];
 
 export const Overlays = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    // Fade in text elements as they enter the viewport
     const sections = gsap.utils.toArray('.fade-in-section');
     sections.forEach((section: any) => {
-      gsap.from(section, {
-        opacity: 0,
-        y: 40,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 80%",
-          toggleActions: "play none none reverse"
+      gsap.fromTo(section, 
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 75%",
+            toggleActions: "play none none reverse"
+          }
         }
-      });
+      );
+    });
+
+    // Staggered reveals for lists
+    gsap.utils.toArray('.stagger-list').forEach((list: any) => {
+      gsap.fromTo(list.children, 
+        { opacity: 0, x: -20 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: list,
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
     });
   }, { scope: containerRef });
 
   return (
-    <div ref={containerRef} className="w-full flex flex-col">
-      {/* Navigation (Sticky) */}
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-glass-border bg-ink/30 backdrop-blur-2xl">
-        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 text-white md:px-8">
-          <a className="font-display text-lg tracking-[0.22em]" href="#hero">
-            AURELIA
+    <div ref={containerRef} className="w-full flex flex-col pointer-events-none">
+      
+      {/* Full-screen subtle vignette to ensure text contrast without harsh boxes */}
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.8)_100%)] z-[-1]"></div>
+
+      {/* Navigation (Minimalist) */}
+      <header className="fixed left-0 right-0 top-0 z-50 mix-blend-difference pointer-events-auto">
+        <nav className="mx-auto flex h-24 max-w-7xl items-center justify-between px-8 text-white md:px-12">
+          <a className="font-display text-xl tracking-[0.3em] uppercase" href="#hero">
+            Aurelia
           </a>
-          <div className="hidden items-center gap-8 text-sm uppercase tracking-[0.18em] text-white/72 md:flex">
-            <a className="transition hover:text-white" href="#collection">Collection</a>
-            <a className="transition hover:text-white" href="#atelier">Atelier</a>
-            <a className="transition hover:text-white" href="#visit">Visit</a>
+          <div className="hidden items-center gap-10 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
+            <a className="transition-colors hover:text-white" href="#collection">Collection</a>
+            <a className="transition-colors hover:text-white" href="#atelier">Atelier</a>
+            <a className="transition-colors hover:text-white" href="#visit">Visit</a>
           </div>
-          <button className="grid size-10 place-items-center border border-white/10 bg-glass text-white transition hover:bg-white/10 md:hidden" aria-label="Open navigation">
-            <Menu size={18} />
-          </button>
         </nav>
       </header>
 
       {/* Page 0: Hero */}
-      <section id="hero" className="h-screen w-full flex items-center justify-start px-5 md:px-16 lg:px-32 relative pointer-events-none">
-        <div className="fade-in-section max-w-2xl pointer-events-auto mt-20">
-          <p className="mb-5 text-xs uppercase tracking-[0.32em] text-champagne">High jewellery atelier</p>
-          <h1 className="font-display text-5xl leading-[0.96] md:text-7xl lg:text-[100px] text-white">
+      <section id="hero" className="min-h-screen w-full flex items-center justify-center px-8 md:px-16 relative">
+        <div className="fade-in-section w-full max-w-7xl flex flex-col items-center text-center mt-32 pointer-events-auto">
+          <p className="mb-8 text-[10px] md:text-xs uppercase tracking-[0.4em] text-champagne">High Jewellery Atelier</p>
+          <h1 className="font-display text-6xl leading-[0.9] md:text-[120px] lg:text-[150px] text-white tracking-tight">
             Aurelia Maison
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-white/60 font-light md:text-xl">
+          <p className="mt-12 max-w-lg text-base leading-relaxed text-white/60 font-light md:text-lg">
             Diamond pieces composed with architectural restraint, warm metalwork, and a private-salon sense of occasion.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <a className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-glass-border text-white uppercase tracking-[0.18em] text-sm px-8 py-4 rounded-full font-medium shadow-[0_0_20px_rgba(255,255,255,0.05)] transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]" href="#collection">
-              Explore collection <ArrowUpRight size={16} />
-            </a>
-          </div>
         </div>
       </section>
 
       {/* Page 1: Collection */}
-      <section id="collection" className="min-h-screen py-32 w-full flex items-center justify-end px-5 md:px-16 lg:px-32 relative pointer-events-none">
-        <div className="fade-in-section max-w-xl bg-black/40 backdrop-blur-3xl border border-glass-border rounded-3xl p-8 md:p-12 pointer-events-auto shadow-2xl">
-          <p className="mb-3 text-xs uppercase tracking-[0.28em] text-champagne">New Salon Edit</p>
-          <h2 className="font-display text-4xl leading-tight md:text-6xl mb-8 text-white">Pieces with presence.</h2>
+      <section id="collection" className="min-h-screen py-32 w-full flex items-center justify-end px-8 md:px-16 lg:px-32 relative">
+        <div className="max-w-xl pointer-events-auto mix-blend-screen">
+          <div className="fade-in-section mb-16">
+            <h2 className="font-display text-5xl leading-tight md:text-7xl text-white mb-6">The Salon Edit</h2>
+            <p className="text-white/50 text-sm tracking-widest uppercase">Pieces with presence</p>
+          </div>
           
-          <div className="flex flex-col gap-6">
+          <div className="stagger-list flex flex-col gap-10">
             {products.map((product) => (
-              <div key={product.id} className="group border-b border-glass-border pb-6 last:border-0 last:pb-0 transition-colors hover:border-champagne/30 cursor-pointer">
-                <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2">{product.category}</p>
-                <div className="flex justify-between items-end">
-                  <div>
-                    <h3 className="font-display text-2xl mb-2 text-white group-hover:text-champagne transition-colors">{product.name}</h3>
-                    <p className="text-sm text-white/50">{product.description}</p>
+              <div key={product.id} className="group cursor-pointer">
+                <p className="text-[9px] uppercase tracking-[0.3em] text-champagne mb-3">{product.category}</p>
+                <div className="flex justify-between items-baseline border-b border-white/10 pb-6 group-hover:border-white/40 transition-colors duration-500">
+                  <div className="pr-8">
+                    <h3 className="font-display text-3xl mb-2 text-white group-hover:text-champagne transition-colors duration-500">{product.name}</h3>
+                    <p className="text-sm text-white/50 font-light leading-relaxed">{product.description}</p>
                   </div>
-                  <span className="text-lg font-light text-white/80">{product.price}</span>
+                  <span className="text-lg font-display text-white/80 shrink-0">{product.price}</span>
                 </div>
               </div>
             ))}
@@ -118,49 +137,54 @@ export const Overlays = () => {
       </section>
 
       {/* Page 2: Atelier Story */}
-      <section id="atelier" className="min-h-screen py-32 w-full flex items-center justify-start px-5 md:px-16 lg:px-32 relative pointer-events-none">
-        <div className="fade-in-section max-w-2xl bg-gradient-to-br from-black/80 to-transparent backdrop-blur-3xl border-l border-t border-glass-border rounded-3xl p-8 md:p-14 pointer-events-auto shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
-          <p className="mb-3 text-xs uppercase tracking-[0.28em] text-champagne">Atelier Story</p>
-          <h2 className="font-display text-4xl leading-tight md:text-5xl mb-6 text-white">Built at the bench, finished for the room.</h2>
-          <p className="text-white/60 text-lg leading-relaxed mb-8">
-            Every Aurelia piece passes through drawing, wax, casting, stone matching, and final polish.
-            The result is jewellery that feels composed rather than decorated. Our digital fitting process allows for an unprecedented level of precision before casting.
-          </p>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="border-l-2 border-champagne/30 pl-4">
-              <span className="text-3xl font-display block mb-1 text-white">1920</span>
-              <span className="text-xs uppercase tracking-widest text-white/40">The First Bench</span>
-            </div>
-            <div className="border-l-2 border-champagne/30 pl-4">
-              <span className="text-3xl font-display block mb-1 text-white">2026</span>
-              <span className="text-xs uppercase tracking-widest text-white/40">Digital Fittings</span>
+      <section id="atelier" className="min-h-screen py-32 w-full flex items-center justify-start px-8 md:px-16 lg:px-32 relative">
+        <div className="max-w-xl pointer-events-auto mix-blend-screen">
+          <div className="fade-in-section mb-16">
+            <p className="mb-4 text-[10px] uppercase tracking-[0.4em] text-champagne">The Process</p>
+            <h2 className="font-display text-5xl leading-[1.1] md:text-7xl text-white">Built at the bench.</h2>
+          </div>
+          
+          <div className="fade-in-section">
+            <p className="text-white/60 text-lg leading-[1.8] font-light mb-16">
+              Every Aurelia piece passes through drawing, wax, casting, stone matching, and final polish.
+              The result is jewellery that feels composed rather than decorated. Our digital fitting process allows for an unprecedented level of precision before casting.
+            </p>
+            
+            <div className="grid grid-cols-2 gap-12 border-t border-white/10 pt-10">
+              <div>
+                <span className="text-4xl font-display block mb-3 text-white">1920</span>
+                <span className="text-[10px] uppercase tracking-widest text-white/50">The First Bench</span>
+              </div>
+              <div>
+                <span className="text-4xl font-display block mb-3 text-white">2026</span>
+                <span className="text-[10px] uppercase tracking-widest text-white/50">Digital Fittings</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Page 3: Visit */}
-      <section id="visit" className="min-h-screen py-32 w-full flex items-center justify-center relative pointer-events-none text-center">
-        <div className="fade-in-section max-w-4xl mx-5 pointer-events-auto">
-          <p className="mb-4 text-xs uppercase tracking-[0.28em] text-champagne">Private Appointments</p>
-          <h2 className="font-display text-5xl leading-tight md:text-7xl mb-16 text-white">A quieter way to choose forever.</h2>
+      <section id="visit" className="min-h-screen py-32 w-full flex items-center justify-center relative text-center">
+        <div className="fade-in-section max-w-3xl px-8 pointer-events-auto mix-blend-screen">
+          <p className="mb-6 text-[10px] uppercase tracking-[0.4em] text-champagne">Private Appointments</p>
+          <h2 className="font-display text-5xl leading-[1.1] md:text-8xl text-white mb-24">A quieter way<br/><i className="text-white/60">to choose forever.</i></h2>
           
-          <div className="grid md:grid-cols-3 gap-6 md:gap-10">
-            {services.map(({ icon: Icon, label }) => (
-              <div key={label} className="bg-black/50 backdrop-blur-2xl border border-glass-border p-8 rounded-2xl transition hover:bg-white/5 hover:border-white/20">
-                <div className="mx-auto size-12 rounded-full bg-white/5 border border-glass-border grid place-items-center mb-6">
-                  <Icon className="text-champagne" size={20} />
-                </div>
-                <p className="text-sm tracking-wide text-white/80">{label}</p>
+          <div className="grid md:grid-cols-3 gap-12 mb-24">
+            {services.map(({ label }) => (
+              <div key={label} className="flex flex-col items-center">
+                <div className="w-px h-12 bg-gradient-to-b from-champagne to-transparent mb-6"></div>
+                <p className="text-xs tracking-[0.2em] uppercase text-white/80">{label}</p>
               </div>
             ))}
           </div>
           
-          <div className="mt-16">
-            <button className="bg-white text-black uppercase tracking-[0.18em] text-sm px-10 py-5 rounded-full font-bold shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.4)]">
+          <button className="group relative inline-flex items-center justify-center">
+            <div className="absolute inset-0 border border-white/30 rounded-full scale-105 group-hover:scale-110 transition-transform duration-700 ease-out"></div>
+            <span className="bg-white text-black uppercase tracking-[0.25em] text-xs px-12 py-5 rounded-full font-medium transition-colors hover:bg-champagne hover:text-black">
               Book a Viewing
-            </button>
-          </div>
+            </span>
+          </button>
         </div>
       </section>
     </div>
